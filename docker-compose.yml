@@ -1,0 +1,40 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: postgres_blogbackenddb
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: admin
+      PGDATA: /data/postgres_blogbackenddb
+    volumes:
+       - postgres:/data/postgres_blogbackenddb
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: on-failure
+  
+  pgadmin:
+    container_name: pgadmin_blogbackenddb
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/var/lib/pgadmin_blogbackenddb
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: on-failure
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+    postgres:
+    pgadmin:
