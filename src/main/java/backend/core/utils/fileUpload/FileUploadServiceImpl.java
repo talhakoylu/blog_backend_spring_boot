@@ -5,13 +5,10 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -80,19 +77,12 @@ public class FileUploadServiceImpl implements FileUploadService{
     }
 
     @Override
-    public Resource load(String fileName) {
-        try {
-            Path file = this.imageRoot.resolve(fileName);
-            Resource resource = new UrlResource(file.toUri());
-
-            if (resource.exists() || resource.isReadable()){
-                return resource;
-            }else {
-                throw  new FileUploadServiceException("Could not get the image.");
-            }
-        }catch (MalformedURLException e){
-            log.error("FileUploadServiceImplLoad MalformedUrlException", e);
-            throw new FileUploadServiceException("An error occured while getting the image.");
+    public boolean delete(String fileName) {
+        try{
+            Path path = this.imageRoot.resolve(fileName);
+            return Files.deleteIfExists(this.mainRoot.resolve(path.toString()));
+        }catch (IOException e){
+            throw new FileUploadServiceException("Something went wrong while deleting the file.");
         }
     }
 }

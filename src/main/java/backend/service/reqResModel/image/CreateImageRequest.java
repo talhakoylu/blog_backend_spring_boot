@@ -1,5 +1,7 @@
 package backend.service.reqResModel.image;
 
+import backend.core.validations.mediaTypeValidation.ValidMediaType;
+import backend.core.validations.mediaTypeValidation.ValidMediaNotNull;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,8 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class CreateImageRequest {
 
-    @NotNull
-    @NotBlank
+    @ValidMediaType
+    @ValidMediaNotNull
     private MultipartFile image;
 
     @NotNull

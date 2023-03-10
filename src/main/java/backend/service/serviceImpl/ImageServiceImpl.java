@@ -1,6 +1,6 @@
 package backend.service.serviceImpl;
 
-import backend.core.utils.exceptions.MappingException;
+import backend.common.PostStatusEnum;
 import backend.core.utils.exceptions.NotFoundException;
 import backend.core.utils.fileUpload.FileModel;
 import backend.core.utils.fileUpload.FileUploadService;
@@ -8,29 +8,18 @@ import backend.model.Image;
 import backend.repository.ImageRepository;
 import backend.service.businessRules.ImageBusinessRules;
 import backend.service.mapper.ImageMapper;
-import backend.service.reqResModel.image.AddImageRequest;
-import backend.service.reqResModel.image.AddImageResponse;
 import backend.service.reqResModel.image.CreateImageRequest;
 import backend.service.reqResModel.image.CreateImageResponse;
+import backend.service.reqResModel.image.SoftDeleteByIdImageResponse;
 import backend.service.serviceInterface.ImageService;
 import lombok.AllArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Service
 public class ImageServiceImpl implements ImageService {
-
-    private final Path root = Paths.get("uploads/images/");
 
     private ImageMapper imageMapper;
 
@@ -39,16 +28,6 @@ public class ImageServiceImpl implements ImageService {
     private ImageBusinessRules imageBusinessRules;
 
     private FileUploadService fileUploadService;
-
-    @Override
-    public AddImageResponse add(AddImageRequest addImageRequest) {
-
-        Image image = this.imageMapper.addImageRequestToImage(addImageRequest);
-
-        Image result = this.imageRepository.save(image);
-
-        return this.imageMapper.imageToAddImageResponse(result);
-    }
 
     @Override
     public Image findByIdForMapper(String id) {
@@ -64,5 +43,19 @@ public class ImageServiceImpl implements ImageService {
 
         return this.imageMapper.imageToCreateImageResponse(result);
     }
+
+    @Override
+    public SoftDeleteByIdImageResponse softDeleteById(String id) {
+        Image findByIdResult = this.imageRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new NotFoundException("No image found."));
+
+        findByIdResult.setIsActive(false);
+        findByIdResult.getPosts().forEach(post -> post.setPostStatus(PostStatusEnum.TASK));
+
+        Image saveResult = this.imageRepository.save(findByIdResult);
+
+        return this.imageMapper.imageToSoftDeleteByIdImageResponse(saveResult);
+    }
+
 
 }
