@@ -49,4 +49,7 @@ public class Image extends BaseModel{
     @OneToMany(mappedBy = "coverImage")
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "image")
+    private List<Category> categories;
+
 }

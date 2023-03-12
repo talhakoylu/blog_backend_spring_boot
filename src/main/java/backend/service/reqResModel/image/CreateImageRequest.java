@@ -15,8 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class CreateImageRequest {
 
-    @ValidMediaType
+    @NotNull
     @ValidMediaNotNull
+    @ValidMediaType
     private MultipartFile image;
 
     @NotNull

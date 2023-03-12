@@ -9,7 +9,7 @@ public class MediaNotNullValidator implements ConstraintValidator<ValidMediaNotN
 
     @Override
     public boolean isValid(MultipartFile value, ConstraintValidatorContext context) {
-        return value != null;
+        return value != null && !value.isEmpty();
     }
 
 }

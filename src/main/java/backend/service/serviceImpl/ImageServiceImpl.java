@@ -1,6 +1,8 @@
 package backend.service.serviceImpl;
 
 import backend.common.PostStatusEnum;
+import backend.core.apiResponse.ApiResponse;
+import backend.core.apiResponse.ResponseHelper;
 import backend.core.utils.exceptions.NotFoundException;
 import backend.core.utils.fileUpload.FileModel;
 import backend.core.utils.fileUpload.FileUploadService;
@@ -13,6 +15,8 @@ import backend.service.reqResModel.image.CreateImageResponse;
 import backend.service.reqResModel.image.SoftDeleteByIdImageResponse;
 import backend.service.serviceInterface.ImageService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -29,23 +33,26 @@ public class ImageServiceImpl implements ImageService {
 
     private FileUploadService fileUploadService;
 
+    private ResponseHelper responseHelper;
+
     @Override
     public Image findByIdForMapper(String id) {
         return this.imageRepository.findById(UUID.fromString(id)).orElseThrow(() -> new NotFoundException("No image with this parameter was found."));
     }
 
     @Override
-    public CreateImageResponse uploadImage(CreateImageRequest createImageRequest) {
+    public ResponseEntity<ApiResponse<CreateImageResponse>> uploadImage(CreateImageRequest createImageRequest) {
 
         FileModel imageFile = this.fileUploadService.uploadImage(createImageRequest.getImage());
         Image toImage = this.imageMapper.fileModelAndCreateImageRequestToImage(imageFile, createImageRequest);
         Image result = this.imageRepository.save(toImage);
 
-        return this.imageMapper.imageToCreateImageResponse(result);
+        return this.responseHelper.buildResponse(HttpStatus.CREATED.value(), "Image uploaded.",
+                this.imageMapper.imageToCreateImageResponse(result));
     }
 
     @Override
-    public SoftDeleteByIdImageResponse softDeleteById(String id) {
+    public ResponseEntity<ApiResponse<SoftDeleteByIdImageResponse>> softDeleteById(String id) {
         Image findByIdResult = this.imageRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new NotFoundException("No image found."));
 
@@ -54,7 +61,8 @@ public class ImageServiceImpl implements ImageService {
 
         Image saveResult = this.imageRepository.save(findByIdResult);
 
-        return this.imageMapper.imageToSoftDeleteByIdImageResponse(saveResult);
+        return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Image removed successfully.",
+                this.imageMapper.imageToSoftDeleteByIdImageResponse(saveResult));
     }
 
 

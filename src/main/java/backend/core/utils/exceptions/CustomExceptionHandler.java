@@ -1,8 +1,12 @@
 package backend.core.utils.exceptions;
 
+import backend.core.apiResponse.ApiResponse;
+import backend.core.apiResponse.ResponseHelper;
 import jakarta.validation.ConstraintDefinitionException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,74 +19,64 @@ import java.util.Map;
 
 @RestControllerAdvice
 @ControllerAdvice
+@AllArgsConstructor
 public class CustomExceptionHandler {
 
+    private ResponseHelper responseHelper;
+
     @ExceptionHandler(MappingException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ProblemDetails handleMappingException(MappingException mappingException){
-        return new ProblemDetails("MappingException", mappingException.getMessage());
+    public ResponseEntity<ApiResponse<ProblemDetails>> handleMappingException(MappingException mappingException){
+        return this.responseHelper.buildResponse(HttpStatus.BAD_REQUEST.value(), "Mapping Error",
+                new ProblemDetails("MappingException", mappingException.getMessage()));
     }
 
     @ExceptionHandler(BusinessRuleException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ProblemDetails handleBusinessRuleException(BusinessRuleException businessRuleException){
-        return new ProblemDetails("BusinessRuleException", businessRuleException.getLocalizedMessage());
+    public ResponseEntity<ApiResponse<ProblemDetails>> handleBusinessRuleException(BusinessRuleException businessRuleException){
+        return this.responseHelper.buildResponse(HttpStatus.BAD_REQUEST.value(), "Business Logic Error",
+                new ProblemDetails("BusinessRuleException", businessRuleException.getMessage()));
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public ProblemDetails handleNotFoundException(NotFoundException notFoundException){
-        return new ProblemDetails("NotFoundException", notFoundException.getMessage());
+    public ResponseEntity<ApiResponse<ProblemDetails>> handleNotFoundException(NotFoundException notFoundException){
+        return this.responseHelper.buildResponse(HttpStatus.NOT_FOUND.value(), "Not Found Error",
+                new ProblemDetails("NotFoundException", notFoundException.getMessage()));
     }
 
     @ExceptionHandler(SlugHelperException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ProblemDetails handleSlugHelperException(SlugHelperException slugHelperException){
-        return new ProblemDetails("SlugConvertError", slugHelperException.getMessage());
+    public ResponseEntity<ApiResponse<ProblemDetails>> handleSlugHelperException(SlugHelperException slugHelperException){
+        return this.responseHelper.buildResponse(HttpStatus.BAD_REQUEST.value(), "Slug Generation Error",
+                new ProblemDetails("SlugConvertException", slugHelperException.getMessage()));
     }
 
 
     @ExceptionHandler({MethodArgumentNotValidException.class, BindException.class, ConstraintDefinitionException.class})
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ProblemDetailsWithErrors handleMethodArgumentNotValidException(BindException bindException){
+    public ResponseEntity<ApiResponse<ProblemDetailsWithErrors>> handleMethodArgumentNotValidException(BindException bindException){
 
         List<Map<String, String>> errors = bindException.getBindingResult().getFieldErrors().stream().map(item -> Map.of("field", item.getField(), "message", item.getDefaultMessage())).toList();
 
-        return new ProblemDetailsWithErrors("ValidationError",
-                "Validation error. Check 'errors' field for details.",
-                errors);
+        return this.responseHelper.buildResponse(HttpStatus.NOT_ACCEPTABLE.value(), "Validation Error",
+                new ProblemDetailsWithErrors("ValidationError",
+                        "Validation error. Check 'errors' field for details.",
+                        errors));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ProblemDetailsWithErrors handleConstraintViolationException(ConstraintViolationException constraintViolationException){
+    public ResponseEntity<ApiResponse<ProblemDetailsWithErrors>> handleConstraintViolationException(ConstraintViolationException constraintViolationException){
 
         List<Map<String, String>> errors = constraintViolationException.getConstraintViolations().stream().map(item -> Map.of("message", item.getMessage())).toList();
 
-        return new ProblemDetailsWithErrors("ValidationError",
-                "Validation error. Check 'errors' field for details.",
-                errors);
+        return this.responseHelper.buildResponse(HttpStatus.NOT_ACCEPTABLE.value(), "Validation Error",
+                new ProblemDetailsWithErrors("ValidationError",
+                        "Validation error. Check 'errors' field for details.",
+                        errors));
     }
-
-//    @ExceptionHandler(BindException.class)
-//    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-//    public ProblemDetailsWithErrors handleMethodArgumentNotValidException(BindException bindException){
-//
-//        List<Map<String, String>> errors = bindException.getBindingResult().getFieldErrors().stream().map(item -> Map.of("field", item.getField(), "message", item.getDefaultMessage())).toList();
-//
-//        ProblemDetailsWithErrors problem = new ProblemDetailsWithErrors("ValidationError",
-//                "Validation error. Check 'errors' field for details.",
-//                errors);
-//        return problem;
-//    }
-
-
 
 
     @ExceptionHandler(FileUploadServiceException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    public ProblemDetails handleFileUploadServiceException(FileUploadServiceException fileUploadServiceException){
-        return new ProblemDetails("fileUploadServiceException", fileUploadServiceException.getMessage());
+    public ResponseEntity<ApiResponse<ProblemDetails>> handleFileUploadServiceException(FileUploadServiceException fileUploadServiceException){
+        return this.responseHelper.buildResponse(HttpStatus.NOT_ACCEPTABLE.value(), "File Upload Error",
+                new ProblemDetails("fileUploadServiceException", fileUploadServiceException.getMessage()));
     }
 
 }
