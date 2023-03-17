@@ -1,6 +1,5 @@
 package backend.service.serviceImpl;
 
-import backend.common.PostStatusEnum;
 import backend.core.apiResponse.ApiResponse;
 import backend.core.apiResponse.ResponseHelper;
 import backend.core.utils.exceptions.NotFoundException;
@@ -15,9 +14,13 @@ import backend.service.reqResModel.image.CreateImageResponse;
 import backend.service.reqResModel.image.SoftDeleteByIdImageResponse;
 import backend.service.serviceInterface.ImageService;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MimeType;
 
 import java.util.UUID;
 
@@ -37,7 +40,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Image findByIdForMapper(String id) {
-        return this.imageRepository.findById(UUID.fromString(id)).orElseThrow(() -> new NotFoundException("No image with this parameter was found."));
+        return this.imageRepository.findByIdAndIsActiveTrue(UUID.fromString(id)).orElseThrow(() -> new NotFoundException("No image with this parameter was found. Image could not be active."));
     }
 
     @Override
@@ -53,16 +56,38 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public ResponseEntity<ApiResponse<SoftDeleteByIdImageResponse>> softDeleteById(String id) {
+
         Image findByIdResult = this.imageRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new NotFoundException("No image found."));
 
         findByIdResult.setIsActive(false);
-        findByIdResult.getPosts().forEach(post -> post.setPostStatus(PostStatusEnum.TASK));
 
         Image saveResult = this.imageRepository.save(findByIdResult);
 
         return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Image removed successfully.",
                 this.imageMapper.imageToSoftDeleteByIdImageResponse(saveResult));
+    }
+
+    @Override
+    public ResponseEntity<Object> getImageByPath(String imageName) {
+
+        Image result = this.imageRepository.findByImageUniqueName(imageName)
+                .orElseThrow(() -> new NotFoundException("Image not found."));
+
+        if (result.getIsActive()) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.asMediaType(MimeType.valueOf(result.getContentType())));
+
+            Resource resource = this.fileUploadService.getImageByImagePath(result.getImageUniqueName());
+
+            if (!resource.exists()) {
+                throw new NotFoundException("Image not found.");
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resource);
+        } else {
+            throw new NotFoundException("Image file not found or inactive.");
+        }
     }
 
 

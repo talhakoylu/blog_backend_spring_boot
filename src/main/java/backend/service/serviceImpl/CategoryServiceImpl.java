@@ -2,6 +2,7 @@ package backend.service.serviceImpl;
 
 import backend.core.apiResponse.ApiResponse;
 import backend.core.apiResponse.ResponseHelper;
+import backend.core.utils.exceptions.NotFoundException;
 import backend.model.Category;
 import backend.repository.CategoryRepository;
 import backend.service.businessRules.CategoryBusinessRules;
@@ -13,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -38,5 +41,11 @@ public class CategoryServiceImpl implements CategoryService {
         Category result = this.categoryRepository.save(category);
 
         return this.responseHelper.buildResponse(HttpStatus.CREATED.value(), "Category added.", this.categoryMapper.categoryToCreateCategoryResponse(result));
+    }
+
+    @Override
+    public Category findByIdForMapper(String id) {
+        return this.categoryRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new NotFoundException("No category found with this parameter."));
     }
 }

@@ -1,5 +1,6 @@
 package backend.core.utils.fileUpload;
 
+import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileUploadService {
@@ -11,5 +12,7 @@ public interface FileUploadService {
     FileModel uploadImage(MultipartFile file);
 
     boolean delete(String fileName);
+
+    Resource getImageByImagePath(String imagePath);
 
 }

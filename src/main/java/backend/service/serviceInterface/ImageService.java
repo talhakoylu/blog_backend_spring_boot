@@ -16,5 +16,6 @@ public interface ImageService {
 
     ResponseEntity<ApiResponse<SoftDeleteByIdImageResponse>> softDeleteById(String id);
 
+    ResponseEntity<Object> getImageByPath(String imagePath);
 
 }

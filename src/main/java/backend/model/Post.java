@@ -31,7 +31,7 @@ public class Post extends BaseModel{
     @Column(name = "slug")
     private String slug;
 
-    @Column(name = "postStatus")
+    @Column(name = "post_status")
     @Enumerated(EnumType.STRING)
     private PostStatusEnum postStatus;
     @ManyToOne()
@@ -39,16 +39,16 @@ public class Post extends BaseModel{
     private Category category;
 
     @ManyToOne()
-    @JoinColumn(name = "coverImage", referencedColumnName = "id")
+    @JoinColumn(name = "cover_image", referencedColumnName = "id")
     private Image coverImage;
 
-    @Column(name = "seoTitle")
+    @Column(name = "seo_title")
     private String seoTitle;
 
-    @Column(name = "seoDescription")
+    @Column(name = "seo_description")
     private String seoDescription;
 
-    @Column(name = "seoTags")
+    @Column(name = "seo_tags")
     private String seoTags;
 }
 

@@ -75,7 +75,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(FileUploadServiceException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponse<ProblemDetails>> handleFileUploadServiceException(FileUploadServiceException fileUploadServiceException){
-        return this.responseHelper.buildResponse(HttpStatus.NOT_ACCEPTABLE.value(), "File Upload Error",
+        return this.responseHelper.buildResponse(HttpStatus.NOT_ACCEPTABLE.value(), "File Upload Service Error",
                 new ProblemDetails("fileUploadServiceException", fileUploadServiceException.getMessage()));
     }
 

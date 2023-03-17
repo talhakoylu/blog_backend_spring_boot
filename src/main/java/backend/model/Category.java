@@ -31,17 +31,20 @@ public class Category extends BaseModel{
     @Column(name = "slug")
     private String slug;
 
-    @Column(name = "seoTitle")
+    @Column(name = "seo_title")
     private String seoTitle;
 
-    @Column(name = "seoDescription")
+    @Column(name = "seo_description")
     private String seoDescription;
 
-    @Column(name = "seoTags")
+    @Column(name = "seo_tags")
     private String seoTags;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
     @ManyToOne()
-    @JoinColumn(name = "coverImage", referencedColumnName = "id")
+    @JoinColumn(name = "cover_image", referencedColumnName = "id")
     private Image image;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)

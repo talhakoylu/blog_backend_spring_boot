@@ -1,12 +1,10 @@
 package backend.service.mapper;
 
 import backend.core.utils.fileUpload.FileModel;
+import backend.model.Category;
 import backend.model.Image;
 import backend.model.Post;
-import backend.service.reqResModel.image.CreateImageRequest;
-import backend.service.reqResModel.image.CreateImageResponse;
-import backend.service.reqResModel.image.SoftDeleteByIdImagePostModel;
-import backend.service.reqResModel.image.SoftDeleteByIdImageResponse;
+import backend.service.reqResModel.image.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -20,6 +18,7 @@ public interface ImageMapper {
     @Mapping(target = "originalImagePath", source = "fileModel.originalPath")
     @Mapping(target = "imageOriginalName", source = "fileModel.originalFileName")
     @Mapping(target = "imageUniqueName", source = "fileModel.uniqueFileName")
+    @Mapping(target = "contentType", source = "fileModel.contentType")
     @Mapping(target = "imageSize", source = "fileModel.fileSize")
     @Mapping(target = "title", source = "createImageRequest.title")
     @Mapping(target = "altText", source = "createImageRequest.altText")
@@ -29,6 +28,9 @@ public interface ImageMapper {
     SoftDeleteByIdImagePostModel postToSoftDeleteByIdImagePostModel(Post post);
 
     List<SoftDeleteByIdImagePostModel> postListToSoftDeleteByIdImagePostModelList(List<Post> posts);
+
+    SoftDeleteByIdImageCategoryModel categoryToSoftDeleteByIdImageCategoryModel(Category category);
+    List<SoftDeleteByIdImageCategoryModel> categoryToSoftDeleteByIdImageCategoryModel(List<Category> categories);
 
     SoftDeleteByIdImageResponse imageToSoftDeleteByIdImageResponse(Image image);
 

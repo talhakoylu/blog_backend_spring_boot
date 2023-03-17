@@ -34,6 +34,6 @@ public class User {
     @OneToOne(mappedBy = "user")
     private UserInfo userInfo;
 
-    @Column(name = "isActive")
+    @Column(name = "is_active")
     private Boolean isActive;
 }

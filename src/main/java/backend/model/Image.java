@@ -25,26 +25,29 @@ public class Image extends BaseModel{
     @Column(name = "title")
     private String title;
 
-    @Column(name = "imagePath")
+    @Column(name = "image_path")
     private String imagePath;
 
-    @Column(name = "originalImagePath")
+    @Column(name = "original_image_path")
     private String originalImagePath;
 
-    @Column(name = "imageUniqueName")
+    @Column(name = "image_unique_name")
     private String imageUniqueName;
 
-    @Column(name = "imageOriginalName")
+    @Column(name = "image_original_name")
     private String imageOriginalName;
 
-    @Column(name = "imageSize")
+    @Column(name = "image_size")
     private long imageSize;
 
-    @Column(name = "altText")
+    @Column(name = "alt_text")
     private String altText;
 
-    @Column(name = "isActive")
+    @Column(name = "is_active")
     private Boolean isActive;
+
+    @Column(name = "content_type")
+    private String contentType;
 
     @OneToMany(mappedBy = "coverImage")
     private List<Post> posts;

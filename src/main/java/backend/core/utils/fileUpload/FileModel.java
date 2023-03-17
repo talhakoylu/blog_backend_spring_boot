@@ -18,4 +18,6 @@ public class FileModel {
     private String originalFileName;
 
     private long fileSize;
+
+    private String contentType;
 }

@@ -17,4 +17,6 @@ public class SoftDeleteByIdImageResponse {
 
     private List<SoftDeleteByIdImagePostModel> posts;
 
+    private List<SoftDeleteByIdImageCategoryModel> categories;
+
 }

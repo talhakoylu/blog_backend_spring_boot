@@ -1,4 +1,4 @@
-package backend.service.reqResModel.category;
+package backend.service.reqResModel.post;
 
 import backend.core.validations.UUIDValidation.UUIDValidation;
 import jakarta.validation.constraints.NotBlank;
@@ -11,37 +11,41 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCategoryRequest {
+public class CreatePostRequest {
 
-    @NotEmpty
     @NotBlank
-    @Size(min = 3, max = 100)
+    @NotEmpty
+    @Size(min = 10, max = 150)
     private String title;
 
     @NotEmpty
     @NotBlank
-    @Size(min = 15, max = 500)
-    private String description;
+    @Size(min = 30)
+    private String content;
 
     private String slug;
 
     @NotEmpty
     @NotBlank
-    @Size(min = 3, max = 60)
+    @Size(min = 10, max = 100)
     private String seoTitle;
 
     @NotEmpty
     @NotBlank
-    @Size(min = 15, max = 250)
+    @Size(min = 30, max = 255)
     private String seoDescription;
 
-    @NotEmpty
     @NotBlank
-    @Size(min = 3, max = 40)
+    @NotEmpty
+    @Size(min = 3, max = 30)
     private String seoTags;
+    
+    private String postStatus;
+
+    @UUIDValidation
+    private String categoryId;
 
     @UUIDValidation
     private String coverImageId;
 
-    private Boolean isActive;
 }
