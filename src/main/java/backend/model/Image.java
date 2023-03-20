@@ -55,4 +55,6 @@ public class Image extends BaseModel{
     @OneToMany(mappedBy = "image")
     private List<Category> categories;
 
+    @OneToMany(mappedBy = "image")
+    private List<OptimizedImage> optimizedImages;
 }

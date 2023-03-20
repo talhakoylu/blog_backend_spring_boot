@@ -79,4 +79,10 @@ public class CustomExceptionHandler {
                 new ProblemDetails("fileUploadServiceException", fileUploadServiceException.getMessage()));
     }
 
+    @ExceptionHandler(ServiceLayerException.class)
+    public ResponseEntity<ApiResponse<ProblemDetails>> handleServiceLayerException(ServiceLayerException serviceLayerException){
+        return this.responseHelper.buildResponse(HttpStatus.BAD_REQUEST.value(), "Service Error",
+                new ProblemDetails("serviceLayerException", serviceLayerException.getMessage()));
+    }
+
 }

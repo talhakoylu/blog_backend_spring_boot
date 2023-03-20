@@ -20,4 +20,10 @@ public class FileModel {
     private long fileSize;
 
     private String contentType;
+
+    private String onlyUniqueName;
+
+    private String onlyExtension;
+
+    private int width;
 }

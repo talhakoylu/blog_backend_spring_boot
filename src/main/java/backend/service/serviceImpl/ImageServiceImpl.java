@@ -3,9 +3,11 @@ package backend.service.serviceImpl;
 import backend.core.apiResponse.ApiResponse;
 import backend.core.apiResponse.ResponseHelper;
 import backend.core.utils.exceptions.NotFoundException;
+import backend.core.utils.exceptions.ServiceLayerException;
 import backend.core.utils.fileUpload.FileModel;
 import backend.core.utils.fileUpload.FileUploadService;
 import backend.model.Image;
+import backend.model.OptimizedImage;
 import backend.repository.ImageRepository;
 import backend.service.businessRules.ImageBusinessRules;
 import backend.service.mapper.ImageMapper;
@@ -13,8 +15,10 @@ import backend.service.reqResModel.image.CreateImageRequest;
 import backend.service.reqResModel.image.CreateImageResponse;
 import backend.service.reqResModel.image.SoftDeleteByIdImageResponse;
 import backend.service.serviceInterface.ImageService;
+import backend.service.serviceInterface.OptimizedImageService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,13 +26,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @AllArgsConstructor
 @Service
 public class ImageServiceImpl implements ImageService {
 
     private ImageMapper imageMapper;
+
+    private OptimizedImageService optimizedImageService;
 
     private ImageRepository imageRepository;
 
@@ -37,6 +47,8 @@ public class ImageServiceImpl implements ImageService {
     private FileUploadService fileUploadService;
 
     private ResponseHelper responseHelper;
+
+    private AsyncTaskExecutor asyncTaskExecutor;
 
     @Override
     public Image findByIdForMapper(String id) {
@@ -49,6 +61,29 @@ public class ImageServiceImpl implements ImageService {
         FileModel imageFile = this.fileUploadService.uploadImage(createImageRequest.getImage());
         Image toImage = this.imageMapper.fileModelAndCreateImageRequestToImage(imageFile, createImageRequest);
         Image result = this.imageRepository.save(toImage);
+
+        asyncTaskExecutor.execute(() -> {
+            List<FileModel> fileModels = new ArrayList<>();
+
+            try {
+                fileModels = this.fileUploadService.asyncImageOptimizer(imageFile.getUniqueFileName(), imageFile.getOnlyUniqueName(), imageFile.getOnlyExtension(), imageFile.getContentType()).get();
+
+                if (fileModels.size() > 0) {
+                    result.setId(result.getId());
+
+                    fileModels.forEach(item -> {
+                        if (item.getWidth() == 0) {
+                            result.setImageSize(item.getFileSize());
+                            this.imageRepository.save(result);
+                        }
+                    });
+
+                    this.optimizedImageService.saveAll(fileModels, result.getId());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                throw new ServiceLayerException("Something went wrong while the optimized images saving.");
+            }
+        });
 
         return this.responseHelper.buildResponse(HttpStatus.CREATED.value(), "Image uploaded.",
                 this.imageMapper.imageToCreateImageResponse(result));

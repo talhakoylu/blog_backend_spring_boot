@@ -1,6 +1,7 @@
 package backend.api.controller;
 
 import backend.core.apiResponse.ApiResponse;
+import backend.core.utils.fileUpload.FileUploadService;
 import backend.core.validations.UUIDValidation.UUIDValidation;
 import backend.service.reqResModel.image.CreateImageRequest;
 import backend.service.reqResModel.image.CreateImageResponse;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.concurrent.Future;
 
 @RestController
 @RequestMapping("/api/image")
@@ -23,6 +25,8 @@ import java.net.MalformedURLException;
 public class ImageController {
 
     private ImageService imageService;
+
+    private FileUploadService fileUploadService;
 
     @PostMapping("upload-image")
     @Operation(summary = "Upload Image", description = "An endpoint to upload image and save result to db.")
@@ -34,6 +38,11 @@ public class ImageController {
     @Operation(summary = "Soft Delete to Image", description = "This request will change the status of image to inactive, but not remove the image from our servers.")
     public ResponseEntity<ApiResponse<SoftDeleteByIdImageResponse>> softDeleteById(@RequestParam("id") @Valid @UUIDValidation String id ){
         return this.imageService.softDeleteById(id);
+    }
+
+
+    @GetMapping("test")
+    public void testEt(@RequestParam("fileName") String fileName){
     }
 
 }
