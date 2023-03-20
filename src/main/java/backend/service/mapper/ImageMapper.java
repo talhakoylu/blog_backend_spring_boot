@@ -3,6 +3,7 @@ package backend.service.mapper;
 import backend.core.utils.fileUpload.FileModel;
 import backend.model.Category;
 import backend.model.Image;
+import backend.model.OptimizedImage;
 import backend.model.Post;
 import backend.service.reqResModel.image.*;
 import org.mapstruct.Mapper;
@@ -33,6 +34,19 @@ public interface ImageMapper {
     List<SoftDeleteByIdImageCategoryModel> categoryToSoftDeleteByIdImageCategoryModel(List<Category> categories);
 
     SoftDeleteByIdImageResponse imageToSoftDeleteByIdImageResponse(Image image);
+
+    //GetAllMappings
+
+    @Mapping(target = "imageName", source = "uniqueName")
+    GetAllImageListResponseResizedVersionsModel optimizedImageToGetAllImageListResponseResizedVersionsModel(OptimizedImage optimizedImage);
+
+    List<GetAllImageListResponseResizedVersionsModel> optimizedImageListToGetAllImageListResponseResizedVersionsModelList(List<OptimizedImage> optimizedImages);
+
+    @Mapping(target = "imageName", source = "imageUniqueName")
+    @Mapping(target = "resizedImages", source = "optimizedImages")
+    GetAllImageListResponse imageToGetAllImageListResponse(Image image);
+
+    List<GetAllImageListResponse> imageListToGetAllImageListResponseList(List<Image> images);
 
 
 }

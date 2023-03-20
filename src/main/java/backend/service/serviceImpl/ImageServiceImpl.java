@@ -7,12 +7,11 @@ import backend.core.utils.exceptions.ServiceLayerException;
 import backend.core.utils.fileUpload.FileModel;
 import backend.core.utils.fileUpload.FileUploadService;
 import backend.model.Image;
-import backend.model.OptimizedImage;
 import backend.repository.ImageRepository;
-import backend.service.businessRules.ImageBusinessRules;
 import backend.service.mapper.ImageMapper;
 import backend.service.reqResModel.image.CreateImageRequest;
 import backend.service.reqResModel.image.CreateImageResponse;
+import backend.service.reqResModel.image.GetAllImageListResponse;
 import backend.service.reqResModel.image.SoftDeleteByIdImageResponse;
 import backend.service.serviceInterface.ImageService;
 import backend.service.serviceInterface.OptimizedImageService;
@@ -26,8 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeType;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -41,8 +38,6 @@ public class ImageServiceImpl implements ImageService {
     private OptimizedImageService optimizedImageService;
 
     private ImageRepository imageRepository;
-
-    private ImageBusinessRules imageBusinessRules;
 
     private FileUploadService fileUploadService;
 
@@ -63,20 +58,21 @@ public class ImageServiceImpl implements ImageService {
         Image result = this.imageRepository.save(toImage);
 
         asyncTaskExecutor.execute(() -> {
-            List<FileModel> fileModels = new ArrayList<>();
+            List<FileModel> fileModels;
 
             try {
                 fileModels = this.fileUploadService.asyncImageOptimizer(imageFile.getUniqueFileName(), imageFile.getOnlyUniqueName(), imageFile.getOnlyExtension(), imageFile.getContentType()).get();
 
-                if (fileModels.size() > 0) {
+                if (fileModels != null && fileModels.size() > 0) {
                     result.setId(result.getId());
 
                     fileModels.forEach(item -> {
-                        if (item.getWidth() == 0) {
-                            result.setImageSize(item.getFileSize());
-                            this.imageRepository.save(result);
-                        }
-                    });
+                                if (item.getWidth() == 0) {
+                                    result.setImageSize(item.getFileSize());
+                                    this.imageRepository.save(result);
+                                }
+                            }
+                    );
 
                     this.optimizedImageService.saveAll(fileModels, result.getId());
                 }
@@ -106,16 +102,16 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public ResponseEntity<Object> getImageByPath(String imageName) {
 
-        Image result = this.imageRepository.findByImageUniqueName(imageName)
+        Image result = this.imageRepository.findImageByUniqueNameInImagesOrOptimizedImages(imageName)
                 .orElseThrow(() -> new NotFoundException("Image not found."));
 
         if (result.getIsActive()) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.asMediaType(MimeType.valueOf(result.getContentType())));
 
-            Resource resource = this.fileUploadService.getImageByImagePath(result.getImageUniqueName());
+            Resource resource = this.fileUploadService.getImageByImagePath(imageName);
 
-            if (!resource.exists()) {
+            if (resource == null || !resource.exists()) {
                 throw new NotFoundException("Image not found.");
             }
 
@@ -123,6 +119,14 @@ public class ImageServiceImpl implements ImageService {
         } else {
             throw new NotFoundException("Image file not found or inactive.");
         }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<List<GetAllImageListResponse>>> getAllImages() {
+
+        List<GetAllImageListResponse> images = this.imageMapper.imageListToGetAllImageListResponseList(this.imageRepository.findAll());
+
+        return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Images listed.", images);
     }
 
 

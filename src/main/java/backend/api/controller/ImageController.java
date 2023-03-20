@@ -1,10 +1,10 @@
 package backend.api.controller;
 
 import backend.core.apiResponse.ApiResponse;
-import backend.core.utils.fileUpload.FileUploadService;
 import backend.core.validations.UUIDValidation.UUIDValidation;
 import backend.service.reqResModel.image.CreateImageRequest;
 import backend.service.reqResModel.image.CreateImageResponse;
+import backend.service.reqResModel.image.GetAllImageListResponse;
 import backend.service.reqResModel.image.SoftDeleteByIdImageResponse;
 import backend.service.serviceInterface.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,9 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.concurrent.Future;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/image")
@@ -26,7 +24,6 @@ public class ImageController {
 
     private ImageService imageService;
 
-    private FileUploadService fileUploadService;
 
     @PostMapping("upload-image")
     @Operation(summary = "Upload Image", description = "An endpoint to upload image and save result to db.")
@@ -40,9 +37,9 @@ public class ImageController {
         return this.imageService.softDeleteById(id);
     }
 
-
-    @GetMapping("test")
-    public void testEt(@RequestParam("fileName") String fileName){
+    @GetMapping("get-all")
+    public ResponseEntity<ApiResponse<List<GetAllImageListResponse>>> getAllImages(){
+        return this.imageService.getAllImages();
     }
 
 }
