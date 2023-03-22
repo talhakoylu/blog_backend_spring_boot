@@ -22,6 +22,17 @@ public class CategoryBusinessRules {
         }
     }
 
+    /**
+     * Check the slug if exists or not. Will throw a BusinessRuleException if requestSlug and existsSlug are not same and new Slug is exists.
+     * @param requestSlug Request slug value
+     * @param existingSlug Providing slug value by existing record.
+     */
+    public void checkIfSlugExists(String requestSlug, String existingSlug){
+        if(!existingSlug.equals(requestSlug) && this.categoryRepository.existsBySlug(requestSlug)){
+            throw new BusinessRuleException("Slug must be unique.");
+        }
+    }
+
     public void checkCoverImageExists(String id){
         if( id != null && !this.imageRepository.existsById(UUID.fromString(id))){
             throw new NotFoundException("No image found with this parameter.");

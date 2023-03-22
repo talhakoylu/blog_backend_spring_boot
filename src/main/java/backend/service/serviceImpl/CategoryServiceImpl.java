@@ -8,9 +8,7 @@ import backend.model.Category;
 import backend.repository.CategoryRepository;
 import backend.service.businessRules.CategoryBusinessRules;
 import backend.service.mapper.CategoryMapper;
-import backend.service.reqResModel.category.CreateCategoryRequest;
-import backend.service.reqResModel.category.CreateCategoryResponse;
-import backend.service.reqResModel.category.GetCategoryDetailsBySlugResponse;
+import backend.service.reqResModel.category.*;
 import backend.service.serviceInterface.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,8 +45,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category findByIdForMapper(String id) {
-        return this.categoryRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new NotFoundException("No category found with this parameter."));
+        return this.categoryRepository.findByIdAndIsActiveTrue(UUID.fromString(id))
+                .orElseThrow(() -> new NotFoundException("No category found with this parameter or category is not active."));
     }
 
     @Override
@@ -59,5 +57,24 @@ public class CategoryServiceImpl implements CategoryService {
         GetCategoryDetailsBySlugResponse result = this.categoryMapper.categoryToGetCategoryDetailsBySlugResponse(category);
 
         return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category details have been introduced.", result);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<UpdateCategoryResponse>> updateCategory(UpdateCategoryRequest updateCategoryRequest) {
+
+        Category category = this.categoryRepository.findById(UUID.fromString(updateCategoryRequest.getId())).orElseThrow(
+                () -> new NotFoundException("Category not found.")
+        );
+
+        String slugOfCategory = category.getSlug();
+
+        category = this.categoryMapper.updateCategoryRequestAndCategoryToCategory(category, updateCategoryRequest);
+
+        this.categoryBusinessRules.checkIfSlugExists(category.getSlug(), slugOfCategory);
+
+        category = this.categoryRepository.save(category);
+
+        return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category updated successfully.",
+                this.categoryMapper.categoryToUpdateCategoryResponse(category));
     }
 }

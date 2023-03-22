@@ -2,9 +2,7 @@ package backend.service.serviceInterface;
 
 import backend.core.apiResponse.ApiResponse;
 import backend.model.Category;
-import backend.service.reqResModel.category.CreateCategoryRequest;
-import backend.service.reqResModel.category.CreateCategoryResponse;
-import backend.service.reqResModel.category.GetCategoryDetailsBySlugResponse;
+import backend.service.reqResModel.category.*;
 import org.springframework.http.ResponseEntity;
 
 public interface CategoryService {
@@ -14,5 +12,7 @@ public interface CategoryService {
     Category findByIdForMapper(String id);
 
     ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlugAndIsActive(String slug);
+
+    ResponseEntity<ApiResponse<UpdateCategoryResponse>> updateCategory(UpdateCategoryRequest updateCategoryRequest);
 
 }

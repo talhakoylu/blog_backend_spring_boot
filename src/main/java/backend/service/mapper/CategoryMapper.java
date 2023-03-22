@@ -7,6 +7,7 @@ import backend.service.reqResModel.category.*;
 import backend.service.serviceInterface.ImageService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,24 @@ public abstract class CategoryMapper {
     public abstract GetCategoryDetailsBySlugResponse categoryToGetCategoryDetailsBySlugResponse(Category category);
     //endregion
 
+    //region UpdateCategory mappings
+    @Mapping(target = "image", expression = "java(toImage(updateCategoryRequest.getCoverImageId(), category.getImage()))")
+    @Mapping(target = "slug", expression = "java(toSlug(updateCategoryRequest.getSlug(), updateCategoryRequest.getTitle(), category.getSlug()))")
+    @Mapping(target = "id", expression = "java(java.util.UUID.fromString(updateCategoryRequest.getId()))")
+    public abstract Category updateCategoryRequestAndCategoryToCategory(@MappingTarget Category category, UpdateCategoryRequest updateCategoryRequest);
+
+    protected  abstract UpdateCategoryResponseOptimizedImagesModel optimizedImagesModelToUpdateCategoryResponseOptimizedImagesModel(OptimizedImage optimizedImage);
+
+    protected abstract List<UpdateCategoryResponseOptimizedImagesModel> optimizedImagesModelListToUpdateCategoryResponseOptimizedImagesModelList(List<OptimizedImage> optimizedImages);
+
+    @Mapping(target = "resizedImages", source = "optimizedImages")
+    protected abstract UpdateCategoryResponseImageModel imageModelToUpdateCategoryResponseImageModel(Image image);
+
+    @Mapping(target = "coverImage", source = "image")
+    public abstract UpdateCategoryResponse categoryToUpdateCategoryResponse(Category category);
+
+    //endregion
+
     //region Helper Methods
     protected Image toImage(String id) {
         if (id == null) return null;
@@ -56,11 +75,42 @@ public abstract class CategoryMapper {
         return this.imageService.findByIdForMapper(id);
     }
 
+    /**
+     * To image method for update mapper. This method gets image id and image instance.
+     * If imageId is null, method will return existing image instance. Also image instance is null
+     * will return null.
+     * @param id image id
+     * @param image existing image instance from db.
+     * @return Image or null
+     */
+    protected Image toImage(String id, Image image) {
+        if (id == null) return null;
+        else if(image != null && id.equals(image.getId().toString())) return image;
+        else return this.imageService.findByIdForMapper(id);
+    }
+
     protected String toSlug(String slug, String title) {
         if (slug != null) {
             return SlugHelper.toSlug(slug);
         } else {
             return SlugHelper.toSlug(title);
+        }
+    }
+
+    /**
+     * String To slug method for update methods
+     * @param requestSlug slug value from request
+     * @param requestTitle title value from request. If slug value not exists create new slug with this param.
+     * @param existsRecordSlug if title and slug request values are null, will return existing slug value.
+     * @return String slug
+     */
+    protected String toSlug(String requestSlug, String requestTitle, String existsRecordSlug) {
+        if(requestSlug != null){
+            return SlugHelper.toSlug(requestSlug);
+        }else if(requestTitle != null){
+            return SlugHelper.toSlug(requestTitle);
+        }else{
+            return existsRecordSlug;
         }
     }
 
