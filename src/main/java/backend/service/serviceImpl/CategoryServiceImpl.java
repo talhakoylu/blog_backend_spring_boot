@@ -57,7 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlug(String slug) {
 
-        Category category = this.categoryRepository.findBySlugAndIsActiveTrueAndPosts_postStatusIs(slug, PostStatusEnum.ACTIVE).orElseThrow( () -> new NotFoundException("Category not found."));
+        Category category = this.categoryRepository.findCategoryBySlugWithIsActiveAndPostStatus(slug, true, PostStatusEnum.ACTIVE).orElseThrow( () -> new NotFoundException("Category not found."));
 
         GetCategoryDetailsBySlugResponse result = this.categoryMapper.categoryToGetCategoryDetailsBySlugResponse(category);
 
@@ -91,7 +91,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseEntity<ApiResponse<GetCategoryByIdResponse>> getCategoryById(String id) {
 
-        Category findResult = this.categoryRepository.findByIdAndPosts_postStatusIs(UUID.fromString(id), PostStatusEnum.ACTIVE).orElseThrow( () -> new NotFoundException("Category not found."));
+        Category findResult = this.categoryRepository.findCategoryByIdWithPostStatus(UUID.fromString(id), PostStatusEnum.ACTIVE).orElseThrow( () -> new NotFoundException("Category not found."));
+
+        System.out.println(findResult);
 
         GetCategoryByIdResponse response = this.categoryMapper.categoryToGetCategoryByIdResponse(findResult);
 
