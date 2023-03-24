@@ -56,15 +56,33 @@ public abstract class CategoryMapper {
     @Mapping(target = "id", expression = "java(java.util.UUID.fromString(updateCategoryRequest.getId()))")
     public abstract Category updateCategoryRequestAndCategoryToCategory(@MappingTarget Category category, UpdateCategoryRequest updateCategoryRequest);
 
-    protected  abstract UpdateCategoryResponseOptimizedImagesModel optimizedImagesModelToUpdateCategoryResponseOptimizedImagesModel(OptimizedImage optimizedImage);
+    protected  abstract UpdateCategoryResponseOptimizedImageModel optimizedImagesModelToUpdateCategoryResponseOptimizedImagesModel(OptimizedImage optimizedImage);
 
-    protected abstract List<UpdateCategoryResponseOptimizedImagesModel> optimizedImagesModelListToUpdateCategoryResponseOptimizedImagesModelList(List<OptimizedImage> optimizedImages);
+    protected abstract List<UpdateCategoryResponseOptimizedImageModel> optimizedImagesModelListToUpdateCategoryResponseOptimizedImagesModelList(List<OptimizedImage> optimizedImages);
 
     @Mapping(target = "resizedImages", source = "optimizedImages")
     protected abstract UpdateCategoryResponseImageModel imageModelToUpdateCategoryResponseImageModel(Image image);
 
     @Mapping(target = "coverImage", source = "image")
     public abstract UpdateCategoryResponse categoryToUpdateCategoryResponse(Category category);
+
+    //endregion
+
+    //region GetCategoryById Mappings
+
+    protected abstract GetCategoryByIdResponseOptimizedImageModel optimizedImageToGetCategoryByIdResponseOptimizedImageModel(OptimizedImage optimizedImage);
+
+    protected abstract List<GetCategoryByIdResponseOptimizedImageModel> optimizedImageListToGetCategoryByIdResponseOptimizedImageModel(List<OptimizedImage> optimizedImages);
+
+    @Mapping(target = "resizedImages", source = "optimizedImages")
+    protected abstract GetCategoryByIdResponseImageModel imageToGetCategoryByIdResponseImageModel(Image image);
+
+    protected abstract GetCategoryByIdResponsePostModel postToGetCategoryByIdResponsePostModel(Post post);
+
+    protected abstract List<GetCategoryByIdResponsePostModel> postListToGetCategoryByIdResponsePostModelList(List<Post> post);
+
+    @Mapping(target = "coverImage", source = "image")
+    public abstract GetCategoryByIdResponse categoryToGetCategoryByIdResponse(Category category);
 
     //endregion
 

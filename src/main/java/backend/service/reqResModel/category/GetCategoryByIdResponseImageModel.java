@@ -9,12 +9,14 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCategoryResponseImageModel {
+public class GetCategoryByIdResponseImageModel {
 
-    private String imagePath;
+    private String title;
 
     private String altText;
 
-    private List<UpdateCategoryResponseOptimizedImageModel> resizedImages;
+    private String imagePath;
+
+    private List<GetCategoryByIdResponseOptimizedImageModel> resizedImages;
 
 }

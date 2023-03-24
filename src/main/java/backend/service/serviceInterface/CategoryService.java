@@ -11,8 +11,11 @@ public interface CategoryService {
 
     Category findByIdForMapper(String id);
 
-    ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlugAndIsActive(String slug);
+    ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlug(String slug);
 
     ResponseEntity<ApiResponse<UpdateCategoryResponse>> updateCategory(UpdateCategoryRequest updateCategoryRequest);
+
+    ResponseEntity<ApiResponse<GetCategoryByIdResponse>> getCategoryById(String id);
+
 
 }

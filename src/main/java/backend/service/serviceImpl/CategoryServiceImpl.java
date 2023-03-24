@@ -49,8 +49,13 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new NotFoundException("No category found with this parameter or category is not active."));
     }
 
+    /**
+     * Returns only the record whose isActive value is true. In the posts array inside it, only values with postStatus.ACTIVE are listed.
+     * @param slug request slug value
+     * @return GetCategoryDetailsBySlugResponse
+     */
     @Override
-    public ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlugAndIsActive(String slug) {
+    public ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlug(String slug) {
 
         Category category = this.categoryRepository.findBySlugAndIsActiveTrueAndPosts_postStatusIs(slug, PostStatusEnum.ACTIVE).orElseThrow( () -> new NotFoundException("Category not found."));
 
@@ -76,5 +81,20 @@ public class CategoryServiceImpl implements CategoryService {
 
         return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category updated successfully.",
                 this.categoryMapper.categoryToUpdateCategoryResponse(category));
+    }
+
+    /**
+     * A service method to use for delete request pages on client side.
+     * @param id UUID id value
+     * @return ResponseEntity< ApiResponse< GetCategoryByIdResponse>>
+     */
+    @Override
+    public ResponseEntity<ApiResponse<GetCategoryByIdResponse>> getCategoryById(String id) {
+
+        Category findResult = this.categoryRepository.findByIdAndPosts_postStatusIs(UUID.fromString(id), PostStatusEnum.ACTIVE).orElseThrow( () -> new NotFoundException("Category not found."));
+
+        GetCategoryByIdResponse response = this.categoryMapper.categoryToGetCategoryByIdResponse(findResult);
+
+        return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category found.", response);
     }
 }

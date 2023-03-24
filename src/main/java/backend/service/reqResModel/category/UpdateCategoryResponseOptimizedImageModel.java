@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCategoryResponseOptimizedImagesModel {
+public class UpdateCategoryResponseOptimizedImageModel {
 
     private String imagePath;
 

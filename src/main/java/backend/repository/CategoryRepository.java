@@ -15,4 +15,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     Optional<Category> findBySlugAndIsActiveTrueAndPosts_postStatusIs(String slug, PostStatusEnum posts_postStatus);
 
+    Optional<Category> findByIdAndPosts_postStatusIs(UUID id, PostStatusEnum postStatusEnum);
+
 }

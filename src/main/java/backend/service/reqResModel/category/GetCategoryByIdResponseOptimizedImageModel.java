@@ -4,17 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCategoryResponseImageModel {
+public class GetCategoryByIdResponseOptimizedImageModel {
 
     private String imagePath;
 
-    private String altText;
-
-    private List<UpdateCategoryResponseOptimizedImageModel> resizedImages;
+    private int width;
 
 }
