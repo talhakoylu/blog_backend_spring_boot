@@ -5,16 +5,21 @@ import backend.core.apiResponse.ApiResponse;
 import backend.core.apiResponse.ResponseHelper;
 import backend.core.utils.exceptions.NotFoundException;
 import backend.model.Category;
+import backend.model.Post;
 import backend.repository.CategoryRepository;
 import backend.service.businessRules.CategoryBusinessRules;
 import backend.service.mapper.CategoryMapper;
 import backend.service.reqResModel.category.*;
 import backend.service.serviceInterface.CategoryService;
+import backend.service.serviceInterface.PostService;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -38,7 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         this.categoryBusinessRules.checkIfSlugExists(category.getSlug());
 
-        Category result = this.categoryRepository.save(category);
+         Category result = this.categoryRepository.save(category);
 
         return this.responseHelper.buildResponse(HttpStatus.CREATED.value(), "Category added.", this.categoryMapper.categoryToCreateCategoryResponse(result));
     }
@@ -57,7 +62,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlug(String slug) {
 
-        Category category = this.categoryRepository.findCategoryBySlugWithIsActiveAndPostStatus(slug, true, PostStatusEnum.ACTIVE).orElseThrow( () -> new NotFoundException("Category not found."));
+        Category category = this.categoryRepository.findCategoryBySlugAndIsActiveIsTrue(slug).orElseThrow( () -> new NotFoundException("Category not found."));
+
+        category.setPosts(category.getPosts().stream().filter(item -> item.getPostStatus().equals(PostStatusEnum.ACTIVE)).toList());
 
         GetCategoryDetailsBySlugResponse result = this.categoryMapper.categoryToGetCategoryDetailsBySlugResponse(category);
 
@@ -77,10 +84,10 @@ public class CategoryServiceImpl implements CategoryService {
 
         this.categoryBusinessRules.checkIfSlugExists(category.getSlug(), slugOfCategory);
 
-        category = this.categoryRepository.save(category);
+        Category result = this.categoryRepository.save(category);
 
         return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category updated successfully.",
-                this.categoryMapper.categoryToUpdateCategoryResponse(category));
+                this.categoryMapper.categoryToUpdateCategoryResponse(result));
     }
 
     /**
@@ -98,5 +105,26 @@ public class CategoryServiceImpl implements CategoryService {
         GetCategoryByIdResponse response = this.categoryMapper.categoryToGetCategoryByIdResponse(findResult);
 
         return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category found.", response);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<SoftDeleteCategoryByIdResponse>> softDeleteById(String id) {
+
+        Category category = this.categoryRepository.findById(UUID.fromString(id)).orElseThrow(() -> new NotFoundException("Category not found."));
+
+        this.categoryBusinessRules.checkCategoryIsAlreadyInactive(category);
+
+        List<Post> postsOfCategory = new ArrayList<>(category.getPosts().stream()
+                .filter(item -> item.getPostStatus() == PostStatusEnum.ACTIVE)
+                .peek(item -> item.setPostStatus(PostStatusEnum.TASK)).toList());
+
+        category.setIsActive(false);
+
+        category.setPosts(postsOfCategory);
+
+        category = this.categoryRepository.save(category);
+
+        return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category successfully removed.",
+                this.categoryMapper.categoryToSoftDeleteIdResponse(category));
     }
 }

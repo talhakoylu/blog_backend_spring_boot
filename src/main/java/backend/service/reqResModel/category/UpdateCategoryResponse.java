@@ -21,7 +21,7 @@ public class UpdateCategoryResponse {
 
     private String seoTags;
 
-    private boolean isActive;
+    private Boolean isActive;
 
     private UpdateCategoryResponseImageModel coverImage;
 

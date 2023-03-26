@@ -10,15 +10,17 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
 @Service
 public abstract class CategoryMapper {
 
     @Autowired
+    @Lazy
     private ImageService imageService;
 
 
@@ -83,6 +85,16 @@ public abstract class CategoryMapper {
 
     @Mapping(target = "coverImage", source = "image")
     public abstract GetCategoryByIdResponse categoryToGetCategoryByIdResponse(Category category);
+
+    //endregion
+
+    //region SoftDeleteCategoryById
+
+    protected abstract SoftDeleteCategoryByIdResponsePostModel postToSoftDeleteCategoryByIdResponsePostModel(Post post);
+
+    protected abstract List<SoftDeleteCategoryByIdResponsePostModel> postListToSoftDeleteCategoryByIdResponsePostModelList(List<Post> posts);
+
+    public abstract SoftDeleteCategoryByIdResponse categoryToSoftDeleteIdResponse(Category category);
 
     //endregion
 

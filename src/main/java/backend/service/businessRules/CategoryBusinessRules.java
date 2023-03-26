@@ -2,6 +2,7 @@ package backend.service.businessRules;
 
 import backend.core.utils.exceptions.BusinessRuleException;
 import backend.core.utils.exceptions.NotFoundException;
+import backend.model.Category;
 import backend.repository.CategoryRepository;
 import backend.repository.ImageRepository;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,12 @@ public class CategoryBusinessRules {
     public void checkCoverImageExists(String id){
         if( id != null && !this.imageRepository.existsById(UUID.fromString(id))){
             throw new NotFoundException("No image found with this parameter.");
+        }
+    }
+
+    public void checkCategoryIsAlreadyInactive(Category category){
+        if(!category.getIsActive()){
+            throw new BusinessRuleException("Category is already removed.");
         }
     }
 

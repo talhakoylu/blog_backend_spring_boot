@@ -5,17 +5,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetCategoryByIdResponsePostModel {
+@Data
+public class SoftDeleteCategoryByIdResponsePostModel {
 
-    private String id;
+    private UUID id;
 
     private String title;
 
     private String slug;
 
-    private String postStatus;
+    private PostStatusEnum postStatus;
 
 }

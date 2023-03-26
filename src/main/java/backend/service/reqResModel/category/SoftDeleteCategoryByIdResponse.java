@@ -1,21 +1,18 @@
 package backend.service.reqResModel.category;
 
-import backend.common.PostStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetCategoryByIdResponsePostModel {
-
-    private String id;
+public class SoftDeleteCategoryByIdResponse {
 
     private String title;
 
-    private String slug;
-
-    private String postStatus;
+    private List<SoftDeleteCategoryByIdResponsePostModel> posts;
 
 }

@@ -43,4 +43,10 @@ public class CategoryController {
         return this.categoryService.getCategoryById(id);
     }
 
+    @DeleteMapping("delete")
+    @Operation(summary = "Soft Delete a Category By Id", description = "This endpoint will call services to change isActive value of category to false. So, after this that category will not shown on lists.")
+    public ResponseEntity<ApiResponse<SoftDeleteCategoryByIdResponse>> softDeleteById(@RequestParam("id") @Valid @UUIDValidation String id){
+        return this.categoryService.softDeleteById(id);
+    }
+
 }

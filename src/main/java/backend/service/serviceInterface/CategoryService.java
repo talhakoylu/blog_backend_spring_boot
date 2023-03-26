@@ -17,5 +17,7 @@ public interface CategoryService {
 
     ResponseEntity<ApiResponse<GetCategoryByIdResponse>> getCategoryById(String id);
 
+    ResponseEntity<ApiResponse<SoftDeleteCategoryByIdResponse>> softDeleteById(String id);
+
 
 }

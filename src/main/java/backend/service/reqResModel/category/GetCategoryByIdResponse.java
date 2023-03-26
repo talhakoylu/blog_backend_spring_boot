@@ -17,7 +17,7 @@ public class GetCategoryByIdResponse {
 
     private String slug;
 
-    private boolean isActive;
+    private Boolean isActive;
 
     private GetCategoryByIdResponseImageModel coverImage;
 

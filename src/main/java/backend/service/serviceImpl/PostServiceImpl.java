@@ -1,5 +1,6 @@
 package backend.service.serviceImpl;
 
+import backend.common.PostStatusEnum;
 import backend.core.apiResponse.ApiResponse;
 import backend.core.apiResponse.ResponseHelper;
 import backend.model.Post;
@@ -13,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -41,5 +44,11 @@ public class PostServiceImpl implements PostService {
         return this.responseHelper.buildResponse(HttpStatus.CREATED.value(),
                 "Post added successfully",
                 this.postMapper.postToCreatePostResponse(result));
+    }
+
+    @Override
+    public void updateAll(List<Post> posts) {
+        this.postRepository.saveAll(posts);
+
     }
 }
