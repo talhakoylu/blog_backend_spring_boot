@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatePostResponseResizedImagesModel {
+public class CreatePostRequestImageModel {
 
-    private String imagePath;
-
-    private int width;
+    private UUID id;
 
 }

@@ -26,15 +26,15 @@ public class PostBusinessRules {
         }
     }
 
-    public void checkCoverImageExists(String id){
-        if( id != null && !this.imageRepository.existsById(UUID.fromString(id))){
-            throw new NotFoundException("No image found with this parameter.");
+    public void checkCoverImageExists(UUID id){
+        if( id != null && !this.imageRepository.existsByIdAndIsActiveTrue(id)){
+            throw new NotFoundException("Image not found or could be inactive.");
         }
     }
 
-    public void checkCategoryExists(String id){
-        if( id != null && !this.categoryRepository.existsById(UUID.fromString(id))){
-            throw new NotFoundException("No category found with this parameter.");
+    public void checkCategoryExists(UUID id){
+        if( id != null && !this.categoryRepository.existsByIdAndIsActiveTrue(id)){
+            throw new NotFoundException("Category not found or could be inactive.");
         }
     }
 

@@ -34,11 +34,11 @@ public class Post extends BaseModel{
     @Column(name = "post_status")
     @Enumerated(EnumType.STRING)
     private PostStatusEnum postStatus;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cover_image", referencedColumnName = "id")
     private Image coverImage;
 

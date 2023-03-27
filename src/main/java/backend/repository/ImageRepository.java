@@ -12,6 +12,8 @@ public interface ImageRepository extends JpaRepository<Image, UUID> {
 
     Optional<Image> findByIdAndIsActiveTrue(UUID id);
 
+    Boolean existsByIdAndIsActiveTrue(UUID id);
+
     @Query("SELECT i FROM Image i LEFT JOIN i.optimizedImages oi WHERE i.imageUniqueName = :name OR oi.uniqueName = :name")
     Optional<Image> findImageByUniqueNameInImagesOrOptimizedImages(@Param("name") String uniqueName);
 

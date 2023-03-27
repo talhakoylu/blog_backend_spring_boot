@@ -13,6 +13,8 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     Boolean existsBySlug(String slug);
 
+    Boolean existsByIdAndIsActiveTrue(UUID id);
+
     Optional<Category> findByIdAndIsActiveTrue(UUID uuid);
 
     //@Query("SELECT c FROM Category c JOIN FETCH c.posts p WHERE c.slug = :slug and c.isActive = :isActive and p.postStatus = :postStatus")

@@ -42,10 +42,8 @@ public class CreatePostRequest {
     
     private String postStatus;
 
-    @UUIDValidation
-    private String categoryId;
+    private CreatePostRequestImageModel coverImage;
 
-    @UUIDValidation
-    private String coverImageId;
+    private CreatePostRequestCategoryModel category;
 
 }
