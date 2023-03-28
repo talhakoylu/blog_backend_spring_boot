@@ -32,8 +32,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public ResponseEntity<ApiResponse<CreatePostResponse>> createPost(CreatePostRequest createPostRequest) {
 
-        this.postBusinessRules.checkCoverImageExists(createPostRequest.getCoverImage().getId());
-        this.postBusinessRules.checkCategoryExists(createPostRequest.getCategory().getId());
+        this.postBusinessRules.checkCoverImageExists(createPostRequest.getCoverImage() != null ? createPostRequest.getCoverImage().getId() : null);
+        this.postBusinessRules.checkCategoryExists(createPostRequest.getCategory() != null ? createPostRequest.getCategory().getId() : null);
 
         Post post = this.postMapper.createPostRequestToPost(createPostRequest);
 

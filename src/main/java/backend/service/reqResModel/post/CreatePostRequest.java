@@ -1,6 +1,6 @@
 package backend.service.reqResModel.post;
 
-import backend.core.validations.UUIDValidation.UUIDValidation;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -42,8 +42,10 @@ public class CreatePostRequest {
     
     private String postStatus;
 
+    @Valid
     private CreatePostRequestImageModel coverImage;
 
+    @Valid
     private CreatePostRequestCategoryModel category;
 
 }

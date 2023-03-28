@@ -18,13 +18,17 @@ import org.mapstruct.Named;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring", uses = {CategoryService.class, ImageService.class})
 @Service
 public abstract class PostMapper {
 
+
+    @Mapping(target = "id", source = "id", qualifiedByName = "stringToUUID")
     protected abstract Image createPostRequestImageModelToImage(CreatePostRequestImageModel createPostRequestImageModel);
 
+    @Mapping(target = "id", source = "id", qualifiedByName = "stringToUUID")
     protected abstract Category createPostRequestCategoryModelToCategory(CreatePostRequestCategoryModel createPostRequestCategoryModel);
 
     @Mapping(target = "postStatus", source = "postStatus", qualifiedByName = "stringToStatus")
@@ -34,6 +38,15 @@ public abstract class PostMapper {
     public abstract CreatePostResponse postToCreatePostResponse(Post post);
 
     //region Helper Methods
+    @Named("stringToUUID")
+    protected UUID stringToUUID(String id){
+        try{
+            return UUID.fromString(id);
+        }catch (IllegalArgumentException e){
+            throw new MappingException("Unacceptable id value.");
+        }
+    }
+
     @Named("stringToStatus")
     protected PostStatusEnum stringToStatus(String postStatus) {
 

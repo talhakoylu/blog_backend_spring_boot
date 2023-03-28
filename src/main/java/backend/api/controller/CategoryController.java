@@ -3,6 +3,8 @@ package backend.api.controller;
 import backend.core.apiResponse.ApiResponse;
 import backend.core.validations.UUIDValidation.UUIDValidation;
 import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
+import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
 import backend.service.serviceInterface.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

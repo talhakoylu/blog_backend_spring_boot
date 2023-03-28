@@ -1,6 +1,7 @@
-package backend.service.reqResModel.category;
+package backend.service.reqResModel.category.updateCategory;
 
 import backend.core.validations.UUIDValidation.UUIDValidation;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -35,8 +36,6 @@ public class UpdateCategoryRequest {
     @Size(min = 3, max = 40)
     private String seoTags;
 
-    @UUIDValidation
-    private String coverImageId;
-
-    private Boolean isActive;
+    @Valid
+    private UpdateCategoryRequestImageModel coverImage;
 }

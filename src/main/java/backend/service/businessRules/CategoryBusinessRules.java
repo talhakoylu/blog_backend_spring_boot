@@ -40,6 +40,12 @@ public class CategoryBusinessRules {
         }
     }
 
+    public void checkCoverImageExistsAndActive(String id){
+        if (id != null && !this.imageRepository.existsByIdAndIsActiveTrue(UUID.fromString(id))){
+            throw new BusinessRuleException("Image not found or could be inactive.");
+        }
+    }
+
     public void checkCategoryIsAlreadyInactive(Category category){
         if(!category.getIsActive()){
             throw new BusinessRuleException("Category is already removed.");

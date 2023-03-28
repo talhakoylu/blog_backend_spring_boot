@@ -1,20 +1,16 @@
-package backend.service.reqResModel.category;
+package backend.service.reqResModel.category.updateCategory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SoftDeleteCategoryByIdResponse {
+public class UpdateCategoryResponse {
 
     private String title;
 
     private String slug;
-
-    private List<SoftDeleteCategoryByIdResponsePostModel> posts;
 
 }

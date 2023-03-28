@@ -2,20 +2,22 @@ package backend.service.mapper;
 
 
 import backend.core.utils.SlugHelper;
+import backend.core.utils.exceptions.MappingException;
 import backend.model.*;
 import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
+import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequestImageModel;
+import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
 import backend.service.serviceInterface.ImageService;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+@Mapper(componentModel = "spring")
 @Service
 public abstract class CategoryMapper {
 
@@ -53,19 +55,17 @@ public abstract class CategoryMapper {
     //endregion
 
     //region UpdateCategory mappings
-    @Mapping(target = "image", expression = "java(toImage(updateCategoryRequest.getCoverImageId(), category.getImage()))")
+
+    @Mapping(target = "id", source = "id", qualifiedByName = "stringToUUID")
+    protected abstract Image updateCategoryRequestImageModelToImage(UpdateCategoryRequestImageModel updateCategoryRequestImageModel);
+
+    @Mapping(target = "image", source = "coverImage", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     @Mapping(target = "slug", expression = "java(toSlug(updateCategoryRequest.getSlug(), updateCategoryRequest.getTitle(), category.getSlug()))")
     @Mapping(target = "id", expression = "java(java.util.UUID.fromString(updateCategoryRequest.getId()))")
+    @Mapping(target = "isActive", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract Category updateCategoryRequestAndCategoryToCategory(@MappingTarget Category category, UpdateCategoryRequest updateCategoryRequest);
 
-    protected  abstract UpdateCategoryResponseOptimizedImageModel optimizedImagesModelToUpdateCategoryResponseOptimizedImagesModel(OptimizedImage optimizedImage);
-
-    protected abstract List<UpdateCategoryResponseOptimizedImageModel> optimizedImagesModelListToUpdateCategoryResponseOptimizedImagesModelList(List<OptimizedImage> optimizedImages);
-
-    @Mapping(target = "resizedImages", source = "optimizedImages")
-    protected abstract UpdateCategoryResponseImageModel imageModelToUpdateCategoryResponseImageModel(Image image);
-
-    @Mapping(target = "coverImage", source = "image")
     public abstract UpdateCategoryResponse categoryToUpdateCategoryResponse(Category category);
 
     //endregion
@@ -99,6 +99,15 @@ public abstract class CategoryMapper {
     //endregion
 
     //region Helper Methods
+    @Named("stringToUUID")
+    protected UUID stringToUUID(String id){
+        try{
+            return UUID.fromString(id);
+        }catch (IllegalArgumentException e){
+            throw new MappingException("Unacceptable id value.");
+        }
+    }
+
     protected Image toImage(String id) {
         if (id == null) return null;
 
