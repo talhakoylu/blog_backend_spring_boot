@@ -2,8 +2,11 @@ package backend.api.controller;
 
 import backend.core.apiResponse.ApiResponse;
 import backend.core.validations.UUIDValidation.UUIDValidation;
-import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.createCategory.CreateCategoryRequest;
+import backend.service.reqResModel.category.createCategory.CreateCategoryResponse;
+import backend.service.reqResModel.category.getCategoryById.GetCategoryByIdResponse;
 import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponse;
+import backend.service.reqResModel.category.softDeleteCategoryById.SoftDeleteCategoryByIdResponse;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
 import backend.service.serviceInterface.CategoryService;
@@ -14,11 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/category")
+@RequestMapping("/api/admin/category")
 @RestController
 @AllArgsConstructor
 @Validated
-public class CategoryController {
+public class CategoryAdminController {
 
     private CategoryService categoryService;
 
@@ -28,11 +31,6 @@ public class CategoryController {
         return this.categoryService.addCategory(createCategoryRequest);
     }
 
-    @GetMapping("get-category-details-by-slug")
-    @Operation(summary = "Get details of category by slug value.", description = "Return a json object that include details of the category which found by slug value.")
-    public ResponseEntity<ApiResponse<GetCategoryDetailsBySlugResponse>> getCategoryDetailsBySlug(@RequestParam("slug") String slug){
-        return this.categoryService.getCategoryDetailsBySlug(slug);
-    }
 
     @PutMapping("")
     @Operation(summary = "Update a category", description = "Endpoint to update category and return a response. You must send coverImageId value, otherwise it will be set as null.")

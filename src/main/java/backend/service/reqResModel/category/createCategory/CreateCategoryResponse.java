@@ -1,4 +1,4 @@
-package backend.service.reqResModel.category;
+package backend.service.reqResModel.category.createCategory;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

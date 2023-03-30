@@ -1,4 +1,4 @@
-package backend.service.reqResModel.category;
+package backend.service.reqResModel.category.createCategory;
 
 import backend.core.validations.UUIDValidation.UUIDValidation;
 import jakarta.validation.constraints.NotBlank;

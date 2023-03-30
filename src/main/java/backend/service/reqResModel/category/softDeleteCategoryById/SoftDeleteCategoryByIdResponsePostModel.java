@@ -1,4 +1,4 @@
-package backend.service.reqResModel.category;
+package backend.service.reqResModel.category.softDeleteCategoryById;
 
 import backend.common.PostStatusEnum;
 import lombok.AllArgsConstructor;

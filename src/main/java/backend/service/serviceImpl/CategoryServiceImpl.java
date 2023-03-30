@@ -9,8 +9,13 @@ import backend.model.Post;
 import backend.repository.CategoryRepository;
 import backend.service.businessRules.CategoryBusinessRules;
 import backend.service.mapper.CategoryMapper;
-import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.createCategory.CreateCategoryRequest;
+import backend.service.reqResModel.category.createCategory.CreateCategoryResponse;
+import backend.service.reqResModel.category.getAllActiveCategories.GetAllActiveCategoriesResponse;
+import backend.service.reqResModel.category.getCategoryById.GetCategoryByIdResponse;
+import backend.service.reqResModel.category.getCategoryDetailsBySlug.GetCategoryDetailsBySlugResponse;
 import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponse;
+import backend.service.reqResModel.category.softDeleteCategoryById.SoftDeleteCategoryByIdResponse;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
 import backend.service.serviceInterface.CategoryService;
@@ -155,5 +160,15 @@ public class CategoryServiceImpl implements CategoryService {
 
         return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category removed.",
                 this.categoryMapper.categoryToHardDeleteCategoryByIdResponse(category));
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<List<GetAllActiveCategoriesResponse>>> getAllCategories() {
+
+        List<Category> categories = this.categoryRepository.findAllByIsActiveIsTrue().orElse(null);
+
+        return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Categories listed.",
+                this.categoryMapper.categoryListToGetAllActiveCategoriesResponseList(categories));
+
     }
 }

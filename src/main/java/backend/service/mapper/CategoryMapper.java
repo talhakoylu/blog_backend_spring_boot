@@ -4,9 +4,20 @@ package backend.service.mapper;
 import backend.core.utils.SlugHelper;
 import backend.core.utils.exceptions.MappingException;
 import backend.model.*;
-import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.createCategory.CreateCategoryRequest;
+import backend.service.reqResModel.category.createCategory.CreateCategoryResponse;
+import backend.service.reqResModel.category.getAllActiveCategories.GetAllActiveCategoriesResponse;
+import backend.service.reqResModel.category.getAllActiveCategories.GetAllActiveCategoriesResponseImageModel;
+import backend.service.reqResModel.category.getAllActiveCategories.GetAllActiveCategoriesResponseOptimizedImageModel;
+import backend.service.reqResModel.category.getCategoryById.GetCategoryByIdResponse;
+import backend.service.reqResModel.category.getCategoryById.GetCategoryByIdResponseImageModel;
+import backend.service.reqResModel.category.getCategoryById.GetCategoryByIdResponseOptimizedImageModel;
+import backend.service.reqResModel.category.getCategoryById.GetCategoryByIdResponsePostModel;
+import backend.service.reqResModel.category.getCategoryDetailsBySlug.*;
 import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponse;
 import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponsePostModel;
+import backend.service.reqResModel.category.softDeleteCategoryById.SoftDeleteCategoryByIdResponse;
+import backend.service.reqResModel.category.softDeleteCategoryById.SoftDeleteCategoryByIdResponsePostModel;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequestImageModel;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
@@ -106,6 +117,20 @@ public abstract class CategoryMapper {
     protected abstract List<HardDeleteCategoryByIdResponsePostModel> postListToHardDeleteCategoryByIdResponsePostModelList(List<Post> posts);
 
     public abstract HardDeleteCategoryByIdResponse categoryToHardDeleteCategoryByIdResponse(Category category);
+    //endregion
+
+    //region GetAllActiveCategories Mappings
+    protected abstract GetAllActiveCategoriesResponseOptimizedImageModel optimizedImageToGetAllActiveCategoriesOptimizedImageModel(OptimizedImage optimizedImage);
+
+    protected abstract List<GetAllActiveCategoriesResponseOptimizedImageModel> optimizedImageListToGetAllActiveCategoriesOptimizedImageModelList(List<OptimizedImage> optimizedImages);
+
+    @Mapping(target = "resizedImages", source = "optimizedImages")
+    protected abstract GetAllActiveCategoriesResponseImageModel imageToGetAllActiveCategoriesResponseImageModel(Image image);
+
+    @Mapping(target = "coverImage", source = "image")
+    protected abstract GetAllActiveCategoriesResponse categoryToGetAllActiveCategoriesResponse(Category category);
+
+    public abstract List<GetAllActiveCategoriesResponse> categoryListToGetAllActiveCategoriesResponseList(List<Category> categories);
     //endregion
 
     //region Helper Methods

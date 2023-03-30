@@ -1,4 +1,4 @@
-package backend.service.reqResModel.category;
+package backend.service.reqResModel.category.getCategoryById;
 
 import backend.common.PostStatusEnum;
 import lombok.AllArgsConstructor;

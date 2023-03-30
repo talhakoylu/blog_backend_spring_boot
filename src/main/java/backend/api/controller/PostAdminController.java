@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/api/post")
+@RequestMapping("/api/admin/post")
 @RestController
 @AllArgsConstructor
 @Validated
-public class PostController {
+public class PostAdminController {
 
     private PostService postService;
 
