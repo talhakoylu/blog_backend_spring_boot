@@ -5,6 +5,8 @@ import backend.core.utils.SlugHelper;
 import backend.core.utils.exceptions.MappingException;
 import backend.model.*;
 import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponse;
+import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponsePostModel;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequestImageModel;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
@@ -96,6 +98,14 @@ public abstract class CategoryMapper {
 
     public abstract SoftDeleteCategoryByIdResponse categoryToSoftDeleteIdResponse(Category category);
 
+    //endregion
+
+    //region HardDeleteCategoryById Mappings
+    protected abstract HardDeleteCategoryByIdResponsePostModel postToHardDeleteCategoryByIdResponsePostModel(Post post);
+
+    protected abstract List<HardDeleteCategoryByIdResponsePostModel> postListToHardDeleteCategoryByIdResponsePostModelList(List<Post> posts);
+
+    public abstract HardDeleteCategoryByIdResponse categoryToHardDeleteCategoryByIdResponse(Category category);
     //endregion
 
     //region Helper Methods

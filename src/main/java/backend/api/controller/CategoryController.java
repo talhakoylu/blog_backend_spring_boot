@@ -3,6 +3,7 @@ package backend.api.controller;
 import backend.core.apiResponse.ApiResponse;
 import backend.core.validations.UUIDValidation.UUIDValidation;
 import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponse;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
 import backend.service.serviceInterface.CategoryService;
@@ -51,4 +52,9 @@ public class CategoryController {
         return this.categoryService.softDeleteById(id);
     }
 
+    @DeleteMapping("hard-delete")
+    @Operation(summary = "Hard Delete a Category By Id", description = "An endpoint that allows you to permanently delete categories. The isActive value of the category must be <strong>False</strong>. Deleted data cannot be recovered.")
+    public ResponseEntity<ApiResponse<HardDeleteCategoryByIdResponse>> hardDeleteById(@RequestParam("id") @Valid @UUIDValidation String id){
+        return this.categoryService.hardDeleteById(id);
+    }
 }

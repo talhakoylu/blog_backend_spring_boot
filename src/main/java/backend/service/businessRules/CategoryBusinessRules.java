@@ -52,4 +52,10 @@ public class CategoryBusinessRules {
         }
     }
 
+    public void checkCategoryIsActive(Category category){
+        if (category.getIsActive()){
+            throw new BusinessRuleException("Category is active.");
+        }
+    }
+
 }

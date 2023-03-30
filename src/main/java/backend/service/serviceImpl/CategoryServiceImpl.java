@@ -10,6 +10,7 @@ import backend.repository.CategoryRepository;
 import backend.service.businessRules.CategoryBusinessRules;
 import backend.service.mapper.CategoryMapper;
 import backend.service.reqResModel.category.*;
+import backend.service.reqResModel.category.hardDeleteCategoryById.HardDeleteCategoryByIdResponse;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryRequest;
 import backend.service.reqResModel.category.updateCategory.UpdateCategoryResponse;
 import backend.service.serviceInterface.CategoryService;
@@ -102,9 +103,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public ResponseEntity<ApiResponse<GetCategoryByIdResponse>> getCategoryById(String id) {
 
-        Category findResult = this.categoryRepository.findCategoryByIdWithPostStatus(UUID.fromString(id), PostStatusEnum.ACTIVE).orElseThrow(() -> new NotFoundException("Category not found."));
+        Category findResult = this.categoryRepository.findById(UUID.fromString(id)).orElseThrow(() -> new NotFoundException("Category not found."));
 
-        System.out.println(findResult);
+        findResult.setPosts(findResult.getPosts().stream().filter(item -> item.getPostStatus().equals(PostStatusEnum.ACTIVE)).toList());
 
         GetCategoryByIdResponse response = this.categoryMapper.categoryToGetCategoryByIdResponse(findResult);
 
@@ -130,5 +131,29 @@ public class CategoryServiceImpl implements CategoryService {
 
         return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category successfully removed.",
                 this.categoryMapper.categoryToSoftDeleteIdResponse(category));
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<HardDeleteCategoryByIdResponse>> hardDeleteById(String id) {
+
+        Category category = this.categoryRepository.findById(UUID.fromString(id)).orElseThrow(() -> new NotFoundException("Category not found."));
+
+        this.categoryBusinessRules.checkCategoryIsActive(category);
+
+        List<Post> postList = new ArrayList<>(category.getPosts().stream().peek(item -> {
+            item.setCategory(null);
+            if(item.getPostStatus().equals(PostStatusEnum.ACTIVE)){
+                item.setPostStatus(PostStatusEnum.TASK);
+            }
+        }).toList());
+
+        category.setPosts(postList);
+
+        System.out.println(category.getPosts());
+
+        this.categoryRepository.delete(category);
+
+        return this.responseHelper.buildResponse(HttpStatus.OK.value(), "Category removed.",
+                this.categoryMapper.categoryToHardDeleteCategoryByIdResponse(category));
     }
 }

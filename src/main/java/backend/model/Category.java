@@ -47,6 +47,6 @@ public class Category extends BaseModel{
     @JoinColumn(name = "cover_image", referencedColumnName = "id")
     private Image image;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "category")
     private List<Post> posts;
 }
